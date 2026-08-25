@@ -1,1 +1,106 @@
-<!doctype html><meta charset="utf-8"><title>Microbiology Minimum Blitz</title><meta name="viewport" content="width=device-width,initial-scale=1"><body style="margin:0;background:#000;color:#fff;font-family:system-ui"><div id="s" style="display:grid;place-items:center;min-height:100vh">Loading Microbiology Blitz…</div><script>(async()=>{try{let a=[];for(let i=1;i<=2;i++)a.push(await (await fetch(`payload/${i}.txt`)).text());let b=atob(a.join(''));let u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);let ds=new DecompressionStream('gzip');let out=await new Response(new Blob([u]).stream().pipeThrough(ds)).text();document.open();document.write(out);document.close()}catch(e){document.getElementById('s').textContent='Failed to load: '+e}})()</script>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Microbiology I — Minimum Blitz</title>
+<meta name="theme-color" content="#07090d">
+<style>
+:root{--bg:#07090d;--panel:#0d121a;--line:#232b38;--text:#f5f7fb;--muted:#8792a4;--blue:#53a9ff;--green:#55d68b;--amber:#ffc95a;--red:#ff796f}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}button,input,select{font:inherit}
+body{padding:0 0 env(safe-area-inset-bottom)}
+.wrap{width:min(1160px,calc(100% - 28px));margin:auto;padding:28px 0 42px}
+header{display:flex;justify-content:space-between;gap:22px;align-items:flex-end;margin-bottom:22px}
+h1{font-size:clamp(32px,5vw,58px);letter-spacing:-.045em;line-height:.93;margin:0;font-weight:850}.accent{color:var(--blue)}
+.sub{max-width:670px;color:#a4adbb;font-size:15px;line-height:1.55;margin-top:14px}.count{font-variant-numeric:tabular-nums;color:var(--muted);font-size:13px;white-space:nowrap}
+.setup{display:grid;grid-template-columns:1.55fr .8fr .8fr auto auto;gap:10px;border:1px solid var(--line);background:#0a0e14;border-radius:18px;padding:12px;margin-bottom:14px}
+.field label{display:block;color:var(--muted);font-size:11px;font-weight:750;text-transform:uppercase;letter-spacing:.08em;margin:0 0 6px 3px}.field input,.field select{width:100%;height:46px;border:1px solid #2b3544;background:#0d131c;color:var(--text);border-radius:12px;padding:0 12px;outline:none}.field input:focus,.field select:focus{border-color:#52677f}.check{height:46px;margin-top:20px;border:1px solid #2b3544;border-radius:12px;padding:0 13px;display:flex;align-items:center;gap:8px;color:#cbd2dc;font-size:13px;white-space:nowrap}.check input{accent-color:var(--blue)}
+button{border:1px solid #2b3544;background:#111722;color:#e9edf3;border-radius:12px;padding:0 16px;min-height:46px;cursor:pointer;font-weight:720}button:hover{background:#18202c}button.primary{background:#eaf4ff;color:#07101a;border-color:#eaf4ff;margin-top:20px}button.primary:hover{background:#fff}.pace{font-size:12px;color:#7f8998;margin:0 4px 18px}.pace strong{color:#bcc6d4;font-weight:700}
+.stage{border:1px solid var(--line);background:linear-gradient(180deg,#0d121a,#090c12);border-radius:22px;min-height:560px;overflow:hidden;display:flex;flex-direction:column}
+#runview{display:flex;flex-direction:column;flex:1}
+.stagebar{height:7px;background:#151b25;position:relative}.stagebar .fill{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--blue);transition:background .15s}
+.stagehead{display:flex;justify-content:space-between;gap:16px;align-items:center;padding:18px 22px 0}.meta{display:flex;gap:9px;align-items:center;min-width:0}.qid{font-size:13px;font-weight:850;letter-spacing:.06em;color:#8bc4ff}.chapter{font-size:12px;color:#778294;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.clock{font-variant-numeric:tabular-nums;font-weight:750;color:#c7d0dc;font-size:14px}
+.content{padding:34px 38px 26px;flex:1;display:flex;flex-direction:column;justify-content:center;max-width:1000px;width:100%;margin:auto}.phase{font-size:12px;font-weight:850;text-transform:uppercase;letter-spacing:.12em;color:var(--blue);margin-bottom:15px}.question{font-size:clamp(30px,4.5vw,54px);font-weight:790;letter-spacing:-.035em;line-height:1.08;text-wrap:balance}.answerwrap{margin-top:30px;padding-top:25px;border-top:1px solid #252d39;opacity:0;transform:translateY(8px);transition:opacity .12s linear,transform .12s linear}.answerwrap.on{opacity:1;transform:none}.alabel{color:var(--green);font-size:11px;text-transform:uppercase;letter-spacing:.1em;font-weight:900;margin-bottom:9px}.answer{font-size:clamp(25px,3.2vw,40px);font-weight:720;line-height:1.18;letter-spacing:-.02em;color:#f3f7f4}
+.hintbox{display:none;margin:0 22px 18px;border:1px solid #273142;background:#0b1017;border-radius:15px;padding:14px 16px}.hintbox.on{display:block}.hinttitle{color:var(--amber);font-size:10px;text-transform:uppercase;letter-spacing:.11em;font-weight:900;margin-bottom:7px}.hinttext{font-size:13px;color:#a9b2bf;line-height:1.45}.hinttext b{color:#d9dfe7;font-weight:720}
+.controls{display:grid;grid-template-columns:auto auto 1fr auto auto;gap:9px;align-items:center;margin-top:12px}.status{text-align:center;color:#818b99;font-size:13px;font-variant-numeric:tabular-nums}.keyboard{text-align:center;color:#5e6876;font-size:11px;margin-top:9px}
+.end{display:none;flex:1;place-items:center;text-align:center;padding:40px}.end.on{display:grid}.end h2{font-size:clamp(38px,6vw,72px);margin:0 0 8px;letter-spacing:-.045em}.end p{color:#909baa;margin:0 0 24px}.end button{min-width:220px}
+@media(max-width:850px){.setup{grid-template-columns:1fr 1fr}.setup .field:first-child{grid-column:1/-1}.check,.primary{margin-top:0}.primary{grid-column:2}.content{padding:30px 24px 24px}.stage{min-height:520px}.stagehead{padding:15px 16px 0}.hintbox{margin:0 15px 15px}.controls{grid-template-columns:1fr 1fr 1fr}.controls .status{grid-column:1/-1;grid-row:1}.controls button{min-width:0;padding:0 8px}}
+@media(max-width:520px){.wrap{width:min(100% - 18px,1160px);padding-top:16px}header{align-items:flex-start;display:block}.count{margin-top:10px}.setup{grid-template-columns:1fr 1fr;padding:9px}.check{grid-column:1}.primary{grid-column:2}.question{font-size:30px}.answer{font-size:26px}.stage{min-height:570px}.chapter{display:none}.content{justify-content:flex-start;padding-top:46px}.controls{gap:6px}.keyboard{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+ <div><h1>Microbiology I<br><span class="accent">Minimum Blitz</span></h1><div class="sub">228 original minimum prompts in source order. Each slot is automatically split <b>50% recall → 50% answer reveal</b>, then advances immediately. This is a rapid sweep, not a flashcard or rating system.</div></div>
+ <div class="count" id="count">Loading 228 prompts…</div>
+</header>
+
+<section class="setup">
+ <div class="field"><label>Scope</label><select id="scope">
+  <option value="all">Complete minimum — 228</option><option value="general">General — G1–G66</option><option value="systematic">Systematic — S1–S162</option>
+  <option value="1">01 · The bacterium as a living system — G1–G8</option><option value="2">02 · Controlling microbial life — G9–G24</option><option value="3">03 · From specimen to identification — G25–G39</option><option value="4">04 · Antibiotics, resistance & clinical logic — G40–G59</option><option value="5">05 · Vaccines, pneumonia & antitoxins — G60–G66</option><option value="6">06 · Gram-positive cocci — S1–S31</option><option value="7">07 · Gram-negative diplococci & respiratory coccobacilli — S32–S52</option><option value="8">08 · Gram-positive rods — S53–S71</option><option value="9">09 · Acid-fast & branching bacteria — S72–S85</option><option value="10">10 · Enteric & environmental Gram-negative rods — S86–S111</option><option value="11">11 · Spirochetes & intracellular / wall-deficient — S112–S141</option><option value="12">12 · Syndrome shortcuts & integrated facts — S142–S162</option>
+ </select></div>
+ <div class="field"><label>Total review time</label><input id="minutes" type="number" min="0.5" step="0.5" value="20"></div>
+ <div class="field"><label>Seconds / question</label><input id="seconds" type="number" min="2" step="0.5" value="5.3"></div>
+ <label class="check"><input id="hints" type="checkbox" checked> Source hints</label>
+ <button class="primary" id="start">Start blitz</button>
+</section>
+<div class="pace" id="pace"></div>
+
+<section class="stage">
+ <div id="runview">
+  <div class="stagebar"><div class="fill" id="fill"></div></div>
+  <div class="stagehead"><div class="meta"><span class="qid" id="qid">READY</span><span class="chapter" id="chapter"></span></div><div class="clock" id="clock">00:00</div></div>
+  <div class="content"><div class="phase" id="phase">Set your pace</div><div class="question" id="question">Choose a scope and total review time, then start. The whole minimum runs continuously in source order.</div><div class="answerwrap" id="answerwrap"><div class="alabel">Minimum answer</div><div class="answer" id="answer"></div></div></div>
+  <div class="hintbox" id="hintbox"><div class="hinttitle">Separate source hint / context</div><div class="hinttext" id="hinttext"></div></div>
+ </div>
+ <div class="end" id="end"><div><h2>Round complete.</h2><p id="endsummary"></p><button id="restart">Run same blitz again</button></div></div>
+</section>
+
+<div class="controls"><button id="prev">← Prev</button><button id="pause">Pause</button><div class="status" id="status">0 / 228</div><button id="hintbtn">Hint</button><button id="next">Next →</button></div>
+<div class="keyboard">Space pause/resume · ←/→ move · H toggle hint</div>
+</div>
+
+<script>window.BLITZ_QUESTIONS=[];</script>
+<script src="data/q1.js"></script>
+<script src="data/q2.js"></script>
+<script src="data/q3.js"></script>
+<script src="data/q4.js"></script>
+<script>
+const $=id=>document.getElementById(id), all=window.BLITZ_QUESTIONS||[];
+const chapters=[
+ {n:1,title:'The bacterium as a living system',test:x=>x.id[0]=='G'&&+x.id.slice(1)<=8,lens:'Before naming pathogens, understand the machine they all share.',hooks:['Essential = life now. Optional = survival advantage later.','Growth curve: Learn → Launch → Level → Lose.','Size ladder: cocci are small, ordinary rods longer, spirochetes longest, obligate intracellular bacteria among the smallest.']},
+ {n:2,title:'Controlling microbial life',test:x=>x.id[0]=='G'&&+x.id.slice(1)>=9&&+x.id.slice(1)<=24,lens:'The target decides the method: total elimination, safer reduction, or living-tissue use.',hooks:['Dry heat: hotter means shorter — 180/1, 160/2, 140/3.','Autoclave anchor: 121°C, +1 atm, 20–30 min.','Skin antisepsis anchor: 70% ethanol ≥1 min; hydrogen peroxide 3%.']},
+ {n:3,title:'From specimen to identification',test:x=>x.id[0]=='G'&&+x.id.slice(1)>=25&&+x.id.slice(1)<=39,lens:'The laboratory converts an invisible organism into a sequence of visible clues.',hooks:['Agglutination = particles aggregate. Precipitation = soluble proteins precipitate.','O-H-K: O somatic/cell wall, H flagella, K capsule.','Titre = the last dilution that still gives a visible reaction.']},
+ {n:4,title:'Antibiotics, resistance, and clinical logic',test:x=>x.id[0]=='G'&&+x.id.slice(1)>=40&&+x.id.slice(1)<=59,lens:'Match the drug to the bacterial target, then ask how the organism escapes.',hooks:['Static stops; cidal kills.','Horizontal transfer: conjugation = contact, transduction = phage, transformation = free DNA.','Resistance ladder: MRSA → vancomycin/anti-MRSA cephalosporin; ESBL → carbapenem; carbapenemase → polymyxin example.']},
+ {n:5,title:'Vaccines, pneumonia, and antitoxins',test:x=>x.id[0]=='G'&&+x.id.slice(1)>=60&&+x.id.slice(1)<=66,lens:'Prevention, specimen choice, and toxin neutralization complete the general framework.',hooks:['Typical = try to see and grow it. Atypical = often detect its footprint.','Capsule vaccines prevent invasive disease.','Antitoxin works against toxin-mediated disease, not merely bacterial presence.']},
+ {n:6,title:'Gram-positive cocci: clusters, chains, and pairs',test:x=>x.id[0]=='S'&&+x.id.slice(1)<=31,lens:'Start with arrangement, then catalase, coagulase, hemolysis, Lancefield group, and optochin.',hooks:['CAT: Staph has catalase; Strep does not.','Aureus = coagulase, gold, aggressive toxins.','Group A = pyogenes; Group B = agalactiae.','Pneumococcus is optochin Sensitive; viridans is Resistant.']},
+ {n:7,title:'Gram-negative diplococci and respiratory coccobacilli',test:x=>x.id[0]=='S'&&+x.id.slice(1)>=32&&+x.id.slice(1)<=52,lens:'Capsule, portal of entry, and toxin pattern separate look-alike organisms.',hooks:['Meningococcus: membrane + meninges + massive sepsis.','Gonococcus: genital tract + newborn eyes.','Hib = type b is the invasive capsule.','Pertussis: attach, intoxicate, damage cilia.']},
+ {n:8,title:'Gram-positive rods: spores, toxins, and special pathogens',test:x=>x.id[0]=='S'&&+x.id.slice(1)>=53&&+x.id.slice(1)<=71,lens:'For spore-forming rods, connect the toxin directly to its neurologic or tissue effect.',hooks:['Botulinum = floppy; tetanus = tight.','C. difficile = diarrhea after microbiome disruption.','C. perfringens = gas + myonecrosis.','Listeria treatment anchor: ampicillin + gentamicin.']},
+ {n:9,title:'Acid-fast and branching bacteria',test:x=>x.id[0]=='S'&&+x.id.slice(1)>=72&&+x.id.slice(1)<=85,lens:'Acid-fastness, growth speed, and branching morphology are the fastest anchors.',hooks:['TB is slow: culture may take weeks.','First-line TB drugs: RIPE.','Nocardia: lung + brain; weakly acid-fast.','Actinomyces: branching anaerobe that tracks through tissue planes.']},
+ {n:10,title:'Enteric and environmental Gram-negative rods',test:x=>x.id[0]=='S'&&+x.id.slice(1)>=86&&+x.id.slice(1)<=111,lens:'Use syndrome, exposure, motility/biochemistry, and resistance to separate the Gram-negative rods.',hooks:['Typhoid: blood early → stool later → Widal in the source list.','Pseudomonas: pigment + perfume + problematic resistance.','Hospital trio: Pseudomonas, Acinetobacter, Stenotrophomonas.']},
+ {n:11,title:'Spirochetes and intracellular / wall-deficient bacteria',test:x=>x.id[0]=='S'&&+x.id.slice(1)>=112&&+x.id.slice(1)<=141,lens:'Transmission and diagnostic method matter more than routine culture.',hooks:['TBL = Treponema, Borrelia, Leptospira.','Lyme: tick → erythema migrans → ELISA → immunoblot.','Chlamydia serotypes: A–C eyes, D–K genital, L1–L3 LGV.','No cell wall → no beta-lactam target.']},
+ {n:12,title:'Syndrome shortcuts and final integrated facts',test:x=>x.id[0]=='S'&&+x.id.slice(1)>=142&&+x.id.slice(1)<=162,lens:'The final list rewards instant association: syndrome → organism → defining clue.',hooks:['AB toxin = binding doorway + active payload.','CAP champion = pneumococcus.','Most common bacterial STD in the list = Chlamydia trachomatis D–K.','UTI core: E. coli first, then Proteus/Klebsiella/S. saprophyticus.']}
+];
+function chapterFor(q){return chapters.find(c=>c.test(q))||chapters[0]}
+function getDeck(){let s=$('scope').value;if(s==='all')return all.slice();if(s==='general')return all.filter(x=>x.id[0]==='G');if(s==='systematic')return all.filter(x=>x.id[0]==='S');let c=chapters.find(x=>x.n===+s);return all.filter(c.test)}
+let deck=[],i=0,running=false,paused=false,revealed=false,slot=5.3,elapsed=0,last=0,raf=0,startStamp=0,sessionElapsed=0;
+function fmt(sec){sec=Math.max(0,Math.ceil(sec));let m=Math.floor(sec/60),s=sec%60;return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')}
+function syncFromMinutes(){let d=getDeck(),min=Math.max(.1,+$('minutes').value||20);$('seconds').value=(min*60/d.length).toFixed(1);updatePace()}
+function syncFromSeconds(){let d=getDeck(),sec=Math.max(.5,+$('seconds').value||5);$('minutes').value=(sec*d.length/60).toFixed(1);updatePace()}
+function updatePace(){let d=getDeck(),sec=Math.max(.5,+$('seconds').value||5),half=sec/2,total=sec*d.length/60;$('pace').innerHTML=`<strong>${d.length} prompts</strong> · ${sec.toFixed(1)} sec each · ${half.toFixed(1)} sec recall + ${half.toFixed(1)} sec reveal · ${total.toFixed(1)} min total`;}
+function sourceHint(q){let c=chapterFor(q),offset=all.indexOf(q),hook=c.hooks[offset%c.hooks.length];return `<b>${c.lens}</b><br>${hook}`}
+function showQuestion(reset=true){let q=deck[i],c=chapterFor(q);if(!q)return;$('qid').textContent=q.id;$('chapter').textContent='· '+String(c.n).padStart(2,'0')+' '+c.title;$('question').textContent=q.q;$('answer').textContent=q.a;$('phase').textContent=revealed?'Reveal':'Recall';$('phase').style.color=revealed?'var(--green)':'var(--blue)';$('answerwrap').classList.toggle('on',revealed);$('hinttext').innerHTML=sourceHint(q);$('hintbox').classList.toggle('on',revealed&&$('hints').checked);$('status').textContent=(i+1)+' / '+deck.length;if(reset){$('fill').style.width='0%'}}
+function start(){deck=getDeck();if(!deck.length)return;i=0;slot=Math.max(.5,+$('seconds').value||5.3);elapsed=0;sessionElapsed=0;revealed=false;running=true;paused=false;last=performance.now();startStamp=last;$('end').classList.remove('on');$('runview').style.display='flex';$('pause').textContent='Pause';showQuestion(true);cancelAnimationFrame(raf);raf=requestAnimationFrame(tick)}
+function tick(now){if(!running)return;if(!paused){let dt=(now-last)/1000;elapsed+=dt;sessionElapsed+=dt;let half=slot/2;if(!revealed&&elapsed>=half){revealed=true;showQuestion(false)}if(elapsed>=slot){i++;if(i>=deck.length){finish();return}elapsed-=slot;revealed=false;showQuestion(true)}let phaseStart=revealed?half:0,phaseLen=half,pct=Math.min(100,((elapsed-phaseStart)/phaseLen)*100);$('fill').style.width=pct+'%';$('fill').style.background=revealed?'var(--green)':'var(--blue)';$('clock').textContent=fmt(Math.max(0,deck.length*slot-sessionElapsed));}last=now;raf=requestAnimationFrame(tick)}
+function togglePause(){if(!running)return;paused=!paused;$('pause').textContent=paused?'Resume':'Pause';$('phase').textContent=paused?'Paused':(revealed?'Reveal':'Recall')}
+function advance(dir){if(!running)return;i+=dir;if(i<0)i=0;if(i>=deck.length){finish();return}elapsed=0;revealed=false;last=performance.now();showQuestion(true)}
+function finish(){running=false;cancelAnimationFrame(raf);$('runview').style.display='none';$('end').classList.add('on');$('endsummary').textContent=`${deck.length} original minimum prompts swept in about ${(deck.length*slot/60).toFixed(1)} minutes.`;$('status').textContent=deck.length+' / '+deck.length}
+$('minutes').addEventListener('input',syncFromMinutes);$('seconds').addEventListener('input',syncFromSeconds);$('scope').addEventListener('change',syncFromMinutes);$('hints').addEventListener('change',()=>{if(running&&revealed)$('hintbox').classList.toggle('on',$('hints').checked)});
+$('start').onclick=start;$('restart').onclick=start;$('pause').onclick=togglePause;$('prev').onclick=()=>advance(-1);$('next').onclick=()=>advance(1);$('hintbtn').onclick=()=>{let h=$('hints');h.checked=!h.checked;if(running&&revealed)$('hintbox').classList.toggle('on',h.checked)};
+document.addEventListener('keydown',e=>{if(['INPUT','SELECT'].includes(document.activeElement.tagName))return;if(e.code==='Space'){e.preventDefault();togglePause()}else if(e.key==='ArrowRight')advance(1);else if(e.key==='ArrowLeft')advance(-1);else if(e.key.toLowerCase()==='h')$('hintbtn').click()});
+if(all.length!==228){$('count').textContent='Data load error: '+all.length+' / 228';$('count').style.color='var(--red)'}else $('count').textContent='228 source prompts · G1–G66 · S1–S162';
+syncFromMinutes();
+</script>
+</body>
+</html>
