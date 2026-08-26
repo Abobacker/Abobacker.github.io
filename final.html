@@ -1,0 +1,28 @@
+<!doctype html><html lang="en" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0"><meta id="themeMeta" name="theme-color" content="#07090d"><title>Microbiology I Final — Minimum Blitz</title><link rel="stylesheet" href="data/final.css?v=1"></head><body><div class="wrap">
+<nav class="topnav"><a href="blitz.html">Bacteriology blitz</a><span class="active">Final blitz</span></nav>
+<header><div><h1>Microbiology I <span>Final Blitz</span></h1><div class="sub">The original bacteriology blitz remains separate. This final page runs the same <b>50% recall → 50% minimum answer</b> workflow across <b>General + Systematic + Mycology + Parasitology + Virology</b>. Added memory cues stay in their own strip and never replace the minimum answer.</div></div><div class="src">338 prompts · 5 blocks</div></header>
+<section class="setup">
+<div class="f"><label>Scope</label><select id="scope"></select></div>
+<div class="f"><label>Mode</label><select id="runmode"><option value="blitz">Selected scope</option><option value="mix">Random exam mix</option></select></div>
+<div class="f"><label>Order</label><select id="order"><option value="source">Source order</option><option value="random">Random order</option></select></div>
+<div class="f"><label>Total time (min)</label><input id="minutes" type="number" min=".1" max="360" step=".1" value="30"></div>
+<div class="f"><label>Seconds / question</label><input id="secq" type="number" min="2" max="600" step=".1" value="5.3"></div>
+<div class="f"><label>Theme</label><select id="theme"><option value="light">Light</option><option value="dark">Dark</option><option value="amoled">AMOLED</option></select></div>
+<div class="f"><label>Extra panel</label><div class="toggle"><input id="hints" type="checkbox" checked><span>Hints</span></div></div>
+<button class="start" id="start">Start final blitz</button>
+</section>
+<section class="mixpanel" id="mixpanel"><div class="mixrow">
+<div class="f"><label>Random mix preset</label><select id="preset"><option value="custom">Custom counts</option><option value="gs44">4 General + 4 Systematic</option><option value="gs48">4 General + 8 Systematic</option><option value="gs08">0 General + 8 Systematic</option><option value="gs016">0 General + 16 Systematic</option></select></div>
+<div class="f"><label>General</label><input class="mixcount" id="gcount" type="number" min="0" max="66" step="1" value="4"></div>
+<div class="f"><label>Systematic</label><input class="mixcount" id="scount" type="number" min="0" max="162" step="1" value="4"></div>
+<div class="f"><label>Mycology</label><input class="mixcount" id="mcount" type="number" min="0" max="19" step="1" value="0"></div>
+<div class="f"><label>Parasitology</label><input class="mixcount" id="pcount" type="number" min="0" max="43" step="1" value="0"></div>
+<div class="f"><label>Virology</label><input class="mixcount" id="vcount" type="number" min="0" max="48" step="1" value="0"></div>
+</div><div class="mixnote">Custom mix draws without replacement from each original block. <b>Run again</b> rerolls a fresh set with the same counts.</div></section>
+<div class="pace" id="pace"></div>
+<main class="stage"><div class="bar"><div class="fill" id="fill"></div></div><div id="run"><div class="head"><div class="meta"><span class="qid" id="qid">READY</span><span class="chapter" id="chapter">Choose scope and pace</span></div><div class="clock"><span class="phase" id="phase">Recall</span><strong id="clock">00:00</strong></div></div><div class="content" id="content"><div class="question" id="question">The question stays visible; the minimum answer appears halfway through the slot.</div><div class="answerwrap"><div class="alabel">Minimum answer</div><div class="answer" id="answer"></div><aside class="hint" id="hint"><div class="hlabel">Separate memory cue · added</div><div class="hlens" id="hlens"></div><div class="htext" id="htext"></div></aside></div></div><div class="controls"><button id="prev">← Prev</button><button class="primary" id="pause">Pause</button><button id="hintbtn">Hint</button><span class="status" id="status">Not started</span><button id="next">Next →</button></div></div><div class="end" id="end"><div><h2>Round complete.</h2><p id="endsummary"></p><button id="again">Run again</button></div></div></main>
+<div class="foot">Space = pause · ←/→ = move · H = hint · source numbering is preserved, including the virology jump from V40 to V42</div></div>
+<script>window.BLITZ_QUESTIONS=[];</script>
+<script src="data/q1.js?v=8"></script><script src="data/q2.js?v=8"></script><script src="data/q3.js?v=8"></script><script src="data/q4.js?v=8"></script>
+<script src="data/final_m.js?v=1"></script><script src="data/final_p.js?v=1"></script><script src="data/final_v.js?v=1"></script>
+<script src="data/meta.js?v=8"></script><script src="data/final_meta.js?v=1"></script><script src="data/final_app.js?v=1"></script></body></html>
