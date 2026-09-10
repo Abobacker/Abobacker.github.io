@@ -12,7 +12,7 @@
 <button class="start" id="start">Start final blitz</button>
 </section>
 <section class="mixpanel" id="mixpanel"><div class="mixrow">
-<div class="f"><label>Random mix preset</label><select id="preset"><option value="custom">Custom counts</option><option value="gs44">4 General + 4 Systematic</option><option value="gs48">4 General + 8 Systematic</option><option value="gs08">0 General + 8 Systematic</option><option value="gs016">0 General + 16 Systematic</option></select></div>
+<div class="f"><label>Random mix preset</label><select id="preset"><option value="custom">Custom counts</option><option value="gs44">4 General + 4 Systematic</option><option value="gs48">4 General + 8 Systematic</option><option value="gs416">4 General + 16 Systematic</option><option value="gs816">8 General + 16 Systematic</option><option value="gs08">0 General + 8 Systematic</option><option value="gs016">0 General + 16 Systematic</option></select></div>
 <div class="f"><label>General</label><input class="mixcount" id="gcount" type="number" min="0" max="66" step="1" value="4"></div>
 <div class="f"><label>Systematic</label><input class="mixcount" id="scount" type="number" min="0" max="162" step="1" value="4"></div>
 <div class="f"><label>Mycology</label><input class="mixcount" id="mcount" type="number" min="0" max="19" step="1" value="0"></div>
@@ -25,4 +25,5 @@
 <script>window.BLITZ_QUESTIONS=[];</script>
 <script src="data/q1.js?v=8"></script><script src="data/q2.js?v=8"></script><script src="data/q3.js?v=8"></script><script src="data/q4.js?v=8"></script>
 <script src="data/final_m.js?v=1"></script><script src="data/final_p.js?v=1"></script><script src="data/final_v.js?v=1"></script>
-<script src="data/meta.js?v=8"></script><script src="data/final_meta.js?v=1"></script><script src="data/final_app.js?v=1"></script></body></html>
+<script src="data/meta.js?v=8"></script><script src="data/final_meta.js?v=1"></script><script src="data/final_app.js?v=1"></script>
+<script>(()=>{const p=document.getElementById('preset');if(!p)return;const old=p.onchange;p.onchange=function(e){if(this.value==='gs416'||this.value==='gs816'){const vals=this.value==='gs416'?[4,16,0,0,0]:[8,16,0,0,0];['gcount','scount','mcount','pcount','vcount'].forEach((id,i)=>document.getElementById(id).value=vals[i]);}if(old)old.call(this,e);};})();</script></body></html>
