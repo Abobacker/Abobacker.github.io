@@ -5,17 +5,17 @@ const MARK_KEY='micro-blitz-highlighted';
 function loadMarks(){try{return new Set(JSON.parse(localStorage.getItem(MARK_KEY)||'[]'))}catch{return new Set()}}
 let marks=loadMarks();
 function saveMarks(){try{localStorage.setItem(MARK_KEY,JSON.stringify([...marks]))}catch{}}
-function markedPool(){return all.filter(q=>marks.has(q.id))}
+function markedPool(){return all.filter(q=>marks.has(q.markId||q.id))}
 function updateMarkedCount(){let o=$('scope').querySelector('option[value="highlighted"]');if(o)o.textContent=`★ Highlighted — ${markedPool().length}`}
-function markUI(){let b=$('markbtn'),q=deck[i],on=!!q&&marks.has(q.id);if(!b)return;b.textContent=on?'★ Highlighted':'☆ Highlight';b.style.borderColor=on?'var(--amber)':'';b.style.color=on?'var(--amber)':''}
-function markCurrent(){if(!deck.length||!deck[i])return;let id=deck[i].id;if(marks.has(id))marks.delete(id);else marks.add(id);saveMarks();updateMarkedCount();markUI()}
+function markUI(){let b=$('markbtn'),q=deck[i],on=!!q&&marks.has(q.markId||q.id);if(!b)return;b.textContent=on?'★ Highlighted':'☆ Highlight';b.style.borderColor=on?'var(--amber)':'';b.style.color=on?'var(--amber)':''}
+function markCurrent(){if(!deck.length||!deck[i])return;let id=deck[i].markId||deck[i].id;if(marks.has(id))marks.delete(id);else marks.add(id);saveMarks();updateMarkedCount();markUI()}
 function theme(v){if(!themes[v])v='dark';document.documentElement.dataset.theme=v;$('theme').value=v;$('themeMeta').content=themes[v];try{localStorage.setItem('micro-final-theme',v)}catch{}}
 function initTheme(){let v='dark';try{v=localStorage.getItem('micro-final-theme')||localStorage.getItem('micro-blitz-theme')||'dark'}catch{}theme(v)}
 function num(id){return +id.slice(1)}function inside(c,q){return c&&c.start[0]===q.id[0]&&num(q.id)>=num(c.start)&&num(q.id)<=num(c.end)}function chap(q){return C.find(c=>inside(c,q))}
 function options(){
   const old=C.filter(c=>c.n<=12).map(c=>`<option value="c${c.n}">${String(c.n).padStart(2,'0')} · ${c.title} — ${c.start}–${c.end}</option>`).join('');
   const newer=C.filter(c=>c.n>12).map(c=>`<option value="c${c.n}">${String(c.n).padStart(2,'0')} · ${c.title} — ${c.start}–${c.end}</option>`).join('');
-  scope.innerHTML=`<option value="all">All final minimums — 338</option><option value="highlighted">★ Highlighted — ${markedPool().length}</option><option value="general">I · General microbiology — 66</option><option value="systematic">II · Systematic bacteriology — 162</option><option value="mycology">III · Mycology — 19</option><option value="parasitology">IV · Parasitology — 43</option><option value="virology">V · Virology — 48</option><optgroup label="Bacteriology sub-sections">${old}</optgroup><optgroup label="Final-block sub-sections">${newer}</optgroup>`
+  scope.innerHTML=`<option value="all">All final minimums — 330</option><option value="highlighted">★ Highlighted — ${markedPool().length}</option><option value="general">I · General microbiology — 66</option><option value="systematic">II · Systemic bacteriology — 154</option><option value="mycology">III · Mycology — 19</option><option value="parasitology">IV · Parasitology — 43</option><option value="virology">V · Virology — 48</option><optgroup label="Bacteriology sub-sections">${old}</optgroup><optgroup label="Final-block sub-sections">${newer}</optgroup>`
 }
 function pick(){
  let v=scope.value;if(v==='all')return [...all];if(v==='highlighted')return markedPool();if(v==='general')return [...pools.G];if(v==='systematic')return [...pools.S];if(v==='mycology')return [...pools.M];if(v==='parasitology')return [...pools.P];if(v==='virology')return [...pools.V];
@@ -42,7 +42,7 @@ function pace(){
 let deck=[],i=0,run=0,paused=0,reveal=0,elapsed=0,last=0,raf=0,slot=6,hints=1;
 function fmt(s){s=Math.max(0,Math.ceil(s));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
 function draw(reset=1){if(!deck.length)return;if(reset){elapsed=0;reveal=0}let q=deck[i],c=chap(q);qid.textContent=q.id;chapter.textContent=c?`${String(c.n).padStart(2,'0')} · ${c.title}`:blockName(q.id[0]);question.textContent=q.q;answer.textContent=q.a;content.classList.toggle('revealed',reveal);phase.textContent=reveal?'Reveal':'Recall';phase.style.color=reveal?'var(--green)':'var(--blue)';hint.classList.toggle('on',reveal&&hints);if(c){hlens.textContent=c.lens;htext.textContent=c.hooks[all.indexOf(q)%c.hooks.length]}else{hlens.textContent='';htext.textContent=''}status.textContent=`${i+1} / ${deck.length}`;markUI();visual()}
-function blockName(p){return {G:'I · General microbiology',S:'II · Systematic bacteriology',M:'III · Mycology',P:'IV · Parasitology',V:'V · Virology'}[p]||''}
+function blockName(p){return {G:'I · General microbiology',S:'II · Systemic bacteriology',M:'III · Mycology',P:'IV · Parasitology',V:'V · Virology'}[p]||''}
 function visual(){fill.style.width=Math.min(100,elapsed/slot*100)+'%';fill.style.background=reveal?'var(--green)':'var(--blue)';clock.textContent=fmt((deck.length-i-1)*slot+Math.max(0,slot-elapsed))}
 function frame(t){if(!run||paused)return;if(!last)last=t;elapsed+=(t-last)/1000;last=t;if(!reveal&&elapsed>=slot/2){reveal=1;draw(0)}if(elapsed>=slot){i++;if(i>=deck.length){finish();return}elapsed=0;reveal=0;last=t;draw();raf=requestAnimationFrame(frame);return}visual();raf=requestAnimationFrame(frame)}
 function startRun(){deck=buildDeck();if(!deck.length){question.textContent='No highlighted questions yet. Highlight questions during a revision, then choose ★ Highlighted.';answer.textContent='';return}i=0;slot=Math.max(.5,+secq.value||6);hints=$('hints').checked;run=1;paused=0;last=0;elapsed=0;reveal=0;end.classList.remove('on');$('run').style.display='flex';pause.textContent='Pause';draw();cancelAnimationFrame(raf);raf=requestAnimationFrame(frame)}
@@ -57,4 +57,4 @@ scope.onchange=fromMin;$('runmode').onchange=modeChange;$('order').onchange=pace
 $('hints').onchange=()=>{hints=$('hints').checked;hint.classList.toggle('on',reveal&&hints)};$('preset').onchange=presetChange;document.querySelectorAll('.mixcount').forEach(x=>x.oninput=customMixChange);
 start.onclick=startRun;again.onclick=startRun;pause.onclick=pauseRun;prev.onclick=()=>move(-1);next.onclick=()=>move(1);hintbtn.onclick=hintToggle;$('markbtn').onclick=markCurrent;
 document.addEventListener('keydown',e=>{if(e.target.matches('input,select'))return;if(e.code==='Space'){e.preventDefault();pauseRun()}else if(e.key==='ArrowRight')move(1);else if(e.key==='ArrowLeft')move(-1);else if(e.key.toLowerCase()==='h')hintToggle();else if(e.key.toLowerCase()==='m')markCurrent()});
-options();initTheme();modeChange();if(all.length!==338)question.textContent=`Data load error: expected 338 prompts, found ${all.length}.`;
+options();initTheme();modeChange();if(all.length!==330)question.textContent=`Data load error: expected 330 prompts, found ${all.length}.`;
