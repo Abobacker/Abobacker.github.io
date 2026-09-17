@@ -1,0 +1,2 @@
+window.BLITZ_SOURCE={"program":"B","title":"Microbiology I - Minimum Blitz","short":"Bacteriology minimum","source":"Microbiology Minimal Questions.pdf","blocks":[{"key":"G","label":"I · General microbiology","count":66},{"key":"S","label":"II · Systemic bacteriology","count":162}],"presets":{"4+4":[4,4],"4+8":[4,8],"4+16":[4,16],"8+16":[8,16],"0+8":[0,8],"0+16":[0,16]}};
+window.BLITZ_QUESTIONS=[];
