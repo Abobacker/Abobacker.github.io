@@ -73,6 +73,9 @@ main { max-width:880px; margin:0 auto; padding:32px 22px 78px; }
   .help { display:none; }
 }
 @media (prefers-reduced-motion:reduce) { *,*:before,*:after { transition:none!important; scroll-behavior:auto!important; } }
+.quiz-entry { display:inline-flex;align-items:center;justify-content:center;padding:11px 15px;border:1px solid var(--accent-border);border-radius:11px;background:var(--accent-bg);color:var(--accent);font-size:13px;font-weight:750;text-decoration:none;min-height:42px; }
+.quiz-entry:hover { filter:brightness(1.16); }
+@media(max-width:570px){.quiz-entry{width:100%;}}
 </style>
 </head>
 <body>
@@ -82,6 +85,7 @@ main { max-width:880px; margin:0 auto; padding:32px 22px 78px; }
   <div class="brand-name">Integrated Question Bank</div>
   <div class="brand-sub">378 questions · original wording and keyed answers · offline-ready</div>
  </div>
+ <a class="quiz-entry" href="quiz.html" title="Practice without showing correct answers">Take a quiz →</a>
  <div class="theme-select" role="group" aria-label="Display theme">
   <button type="button" data-theme-option="amoled" aria-pressed="true">AMOLED</button>
   <button type="button" data-theme-option="vscode" aria-pressed="false">VS Dark</button>
