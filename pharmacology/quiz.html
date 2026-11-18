@@ -112,7 +112,7 @@ select{padding:11px 12px;border:1px solid var(--border);border-radius:8px;backgr
 <section class="card setup" id="setup">
  <div class="overline">Moodle-style · deferred feedback</div>
  <h1>Start an exam attempt</h1>
- <p class="muted">One question at a time. Select answers, flag questions, move between questions, and see your score and correct answers only after submitting the attempt.</p>
+ <p class="muted">One question at a time. Correct answers appear immediately after your selection (for multi-answer questions, press Check answer). Your score and review remain available at the end.</p>
  <div class="setup-grid">
   <div class="field"><label for="scope">Question pool</label><select id="scope"><option value="all">All questions</option><option value="main">Main bank (1–295)</option><option value="appendix">Earlier papers (296–378)</option></select></div>
   <div class="field"><label for="length">Attempt length</label><select id="length"><option value="30">30 questions</option><option value="50">50 questions</option><option value="100">100 questions</option><option value="all">All available</option></select></div>
@@ -134,7 +134,7 @@ select{padding:11px 12px;border:1px solid var(--border);border-radius:8px;backgr
 <div>
 <article class="card" aria-label="Current exam question">
 <div class="exam-head"><div><div class="qtitle" id="questionTitle">Question 1</div><div class="qstatus" id="questionStatus">Not yet answered · Marked out of 1.00</div></div><button class="flag" type="button" id="flag">⚑ Flag question</button></div>
-<div class="qbody"><div class="stem" id="stem"></div><div class="choices" id="choices" role="group" aria-label="Answer options"></div><div class="qnotice" id="notice"></div><div class="grading" id="grading" hidden></div></div>
+<div class="qbody"><div class="stem" id="stem"></div><div class="choices" id="choices" role="group" aria-label="Answer options"></div><div class="actions"><button class="primary" id="checkAnswer" type="button" hidden>Check answer</button></div><div class="qnotice" id="notice"></div><div class="grading" id="grading" hidden></div></div>
 </article>
 <div class="exam-actions"><div class="buttonrow"><button class="secondary" id="prev" type="button">← Previous</button><button class="primary" id="next" type="button">Next →</button></div><button class="secondary" id="finish" type="button">Finish attempt</button></div>
 </div>
@@ -160,6 +160,7 @@ function setTheme(t){
 }
 function keyFor(q){return q.a.filter(x=>x[2]).map(x=>x[0])}
 function getSelected(n){return Array.isArray(attempt.answers[n])?attempt.answers[n]:[]}
+function isChecked(n){return !!(attempt.checked&&attempt.checked[n])}
 function equalSet(a,b){return a.length===b.length&&a.every(x=>b.includes(x))}
 function status(n){const q=byId[n],a=getSelected(n),k=keyFor(q);return a.length===0?'unanswered':equalSet(a,k)?'correct':'wrong'}
 function save(){setStorage(SAVE_KEY,JSON.stringify(attempt))}
@@ -179,21 +180,21 @@ function startAttempt(){
  let ids=pool.map(q=>q.n);
  if(EL('order').value==='shuffle')fisherYates(ids);
  const count=EL('length').value;if(count!=='all')ids=ids.slice(0,Math.min(Number(count),ids.length));
- attempt={ids,answers:{},flags:{},started:Date.now(),finished:false,finishedAt:null};
+ attempt={ids,answers:{},checked:{},flags:{},started:Date.now(),finished:false,finishedAt:null};
  pos=0;reviewFilter='all';save();render();
 }
 function resume(){
  try{const old=JSON.parse(getStorage(SAVE_KEY));if(!old||!Array.isArray(old.ids)||!old.ids.length)throw Error('No session');
  if(!old.ids.every(n=>Number.isInteger(n)&&byId[n]&&keyFor(byId[n]).length>0))throw Error('Invalid questions');
- attempt=old;pos=0;reviewFilter='all';render();
+ attempt=old;attempt.checked=attempt.checked||{};pos=0;reviewFilter='all';render();
  }catch(e){clearStorage(SAVE_KEY);setup()}
 }
 function elapsed(){if(!attempt)return;const end=attempt.finishedAt||Date.now();const sec=Math.floor(Math.max(0,end-attempt.started)/1000);const min=Math.floor(sec/60);const ss=sec%60;EL('elapsed').textContent=String(min).padStart(2,'0')+':'+String(ss).padStart(2,'0')}
 function selectOption(letter,checked,multi){
  if(attempt.finished)return;
- const n=attempt.ids[pos];
+ const n=attempt.ids[pos];if(isChecked(n))return;
  if(multi){const s=new Set(getSelected(n));if(checked)s.add(letter);else s.delete(letter);attempt.answers[n]=[...s]}
- else attempt.answers[n]=[letter];
+ else {attempt.answers[n]=[letter];attempt.checked[n]=true;}
  save();render();
 }
 function navTo(newPos){
@@ -210,17 +211,19 @@ function renderOptions(q){
  const multi=keyFor(q).length>1;const selected=getSelected(q.n);
  for(const [letter,txt,isCorrect] of q.a){
   const label=document.createElement('label');label.className='choice';
-  const input=document.createElement('input');input.type=multi?'checkbox':'radio';input.name='q'+q.n;input.value=letter;input.checked=selected.includes(letter);input.disabled=attempt.finished;
+  const input=document.createElement('input');input.type=multi?'checkbox':'radio';input.name='q'+q.n;input.value=letter;input.checked=selected.includes(letter);input.disabled=attempt.finished||isChecked(q.n);
   if(input.checked)label.classList.add('selected');
-  if(attempt.finished){if(isCorrect)label.classList.add('keyed');else if(input.checked)label.classList.add('wrong')}
+  if(attempt.finished||isChecked(q.n)){if(isCorrect)label.classList.add('keyed');else if(input.checked)label.classList.add('wrong')}
   const key=document.createElement('span');key.className='choice-letter';key.textContent=letter+'.';
   const content=document.createElement('span');content.className='choice-text';content.textContent=txt;
   label.append(input,key,content);
-  if(attempt.finished&&isCorrect){const check=document.createElement('span');check.className='correct-icon';check.textContent='✓';label.append(check)}
+  if((attempt.finished||isChecked(q.n))&&isCorrect){const check=document.createElement('span');check.className='correct-icon';check.textContent='✓';label.append(check)}
   input.addEventListener('change',()=>selectOption(letter,input.checked,multi));
   holder.append(label);
  }
- EL('notice').textContent=multi?'Select all that apply (multiple answers are keyed in the source).':q.a.length!==5?'Source has '+q.a.length+' visible options; no new distractors were invented.':'Select one answer.';
+ EL('notice').textContent=multi?'Select all that apply, then press Check answer.':q.a.length!==5?'Select one answer. The correct option is shown immediately. Source has '+q.a.length+' visible options.':'Choose an option to reveal the correct answer immediately.';
+ EL('checkAnswer').hidden=!multi||attempt.finished||isChecked(q.n);
+ EL('checkAnswer').disabled=!getSelected(q.n).length;
 }
 function renderNav(){
  const nav=EL('navgrid');nav.replaceChildren();
@@ -228,7 +231,7 @@ function renderNav(){
   const b=document.createElement('button');b.type='button';b.textContent=String(i+1);b.title='Question '+(i+1)+' · Bank Q'+n;b.className='navq';
   if(getSelected(n).length)b.classList.add('answered');
   if(attempt.flags[n])b.classList.add('flagged');
-  if(attempt.finished)b.classList.add(status(n)==='correct'?'good':'bad');
+  if(attempt.finished||isChecked(n))b.classList.add(status(n)==='correct'?'good':'bad');
   if(i===pos)b.classList.add('current');
   b.setAttribute('aria-label',b.title);b.addEventListener('click',()=>navTo(i));nav.append(b);
  });
@@ -245,13 +248,13 @@ function render(){
  EL('questionProgress').textContent='Question '+(pos+1)+' of '+attempt.ids.length;
  EL('progressFill').style.width=(100*(pos+1)/attempt.ids.length)+'%';
  EL('questionTitle').textContent='Question '+(pos+1)+'  ·  Bank Q'+n;
- const sel=getSelected(n);EL('questionStatus').textContent=done?('Reviewed · Marked out of 1.00'):sel.length?'Answer saved · Marked out of 1.00':'Not yet answered · Marked out of 1.00';
+ const sel=getSelected(n);EL('questionStatus').textContent=done?'Reviewed · Marked out of 1.00':isChecked(n)?'Answer checked · Marked out of 1.00':sel.length?'Answer selected · Marked out of 1.00':'Not yet answered · Marked out of 1.00';
  EL('stem').textContent=q.q;renderOptions(q);
  EL('flag').textContent=attempt.flags[n]?'⚑ Flagged':'⚑ Flag question';EL('flag').classList.toggle('active',!!attempt.flags[n]);EL('flag').disabled=done;
  EL('prev').disabled=pos===0;EL('next').disabled=pos===attempt.ids.length-1;
  EL('finish').hidden=done;EL('finishSide').hidden=done;
- const grading=EL('grading');grading.hidden=!done;
- if(done){const ok=status(n)==='correct';grading.className='grading '+(ok?'pass':'fail');grading.textContent=ok?'Correct · 1.00 / 1.00':('Incorrect · 0.00 / 1.00'+(sel.length?'':' · No answer selected'))}
+ const grading=EL('grading');grading.hidden=!(done||isChecked(n));
+ if(done||isChecked(n)){const ok=status(n)==='correct';grading.className='grading '+(ok?'pass':'fail');grading.textContent=ok?'Correct · 1.00 / 1.00':('Incorrect · 0.00 / 1.00'+(sel.length?'':' · No answer selected'))}
  renderNav();elapsed();
  document.title='Question '+(pos+1)+' of '+attempt.ids.length+' · Pharmacology I quiz';
 }
@@ -267,6 +270,7 @@ function showResults(){
  EL('correctCount').textContent=String(s.correct);EL('wrongCount').textContent=String(s.wrong);EL('unansweredCount').textContent=String(s.unanswered);
  document.title='Quiz results · Pharmacology I';
 }
+EL('checkAnswer').addEventListener('click',()=>{if(!attempt||attempt.finished)return;const n=attempt.ids[pos];if(!getSelected(n).length)return;attempt.checked=attempt.checked||{};attempt.checked[n]=true;save();render()});
 EL('start').addEventListener('click',startAttempt);
 EL('resume').addEventListener('click',resume);
 EL('prev').addEventListener('click',()=>navTo(pos-1));EL('next').addEventListener('click',()=>navTo(pos+1));
